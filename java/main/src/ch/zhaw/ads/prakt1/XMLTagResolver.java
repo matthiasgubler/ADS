@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class XMLTagResolver {
 
-    public static final String EXTRACTED_XML_REGEX = "<*>*/*=*\"*'*";
+    private static final String EXTRACTED_XML_REGEX = "<*>*/*=*\"*'*";
     private static String XML_TAG_REGEX = "<.[^(><.)/]+>";
     private static String OPENING_TAG_REGEX = "<[^/].[^(><.)/]+>";
     private static String CLOSING_TAG_REGEX = "</.[^(><.)/]+>";
@@ -19,6 +19,8 @@ public class XMLTagResolver {
     public XMLTagResolver(String input) {
         this.input = input;
         xmlTagMatcher = xmlTagPattern.matcher(input);
+
+        //Erster Wert "vorlesen"
         xmlTagMatcher.find();
     }
 
@@ -41,10 +43,6 @@ public class XMLTagResolver {
 
     public static boolean isOpeningTag(String tag) {
         return Pattern.matches(OPENING_TAG_REGEX, tag);
-    }
-
-    public static boolean isClosingTag(String tag) {
-        return Pattern.matches(CLOSING_TAG_REGEX, tag);
     }
 
     public static boolean isCorrespondingTag(String openingTag, String closingTag) {

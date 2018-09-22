@@ -2,8 +2,6 @@ package ch.zhaw.ads.prakt1;
 
 import ch.zhaw.ads.CommandExecutor;
 
-import static ch.zhaw.ads.prakt1.BracketResolver.OPENING_BRACKETS;
-import static ch.zhaw.ads.prakt1.BracketResolver.isCorrespondingBracket;
 import static ch.zhaw.ads.prakt1.XMLTagResolver.isCorrespondingTag;
 import static ch.zhaw.ads.prakt1.XMLTagResolver.isOpeningTag;
 

@@ -1,14 +1,14 @@
 package ch.zhaw.ads;
 
 import ch.zhaw.ads.prakt1.BracketServer;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class BracketServerTest {
 
-    BracketServer bs;
+    private BracketServer bs;
 
     @Before
     public void setUp() throws Exception {
@@ -31,8 +31,8 @@ public class BracketServerTest {
         test(false, ")");
         test(true, "<(<>)>");
         test(false, "<(<)>>");
-        //test(true, "<*(<*<>*>)*>");
-        //test(false, "<(<**>)*>");
+        test(true, "<*(<*<>*>)*>");
+        test(false, "<(<**>)*>");
     }
 
 }

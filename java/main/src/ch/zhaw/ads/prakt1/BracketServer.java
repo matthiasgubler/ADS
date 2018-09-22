@@ -2,8 +2,8 @@ package ch.zhaw.ads.prakt1;
 
 import ch.zhaw.ads.CommandExecutor;
 
-import static ch.zhaw.ads.prakt1.BracketResolver.OPENING_BRACKETS;
 import static ch.zhaw.ads.prakt1.BracketResolver.isCorrespondingBracket;
+import static ch.zhaw.ads.prakt1.BracketResolver.isOpeningBracket;
 
 public class BracketServer implements CommandExecutor {
 
@@ -21,14 +21,13 @@ public class BracketServer implements CommandExecutor {
         BracketResolver bracketResolver = new BracketResolver(toCheck);
 
         while (!bracketResolver.everythingRead()) {
-            char nextValue = bracketResolver.nextBracket();
-            String nextValueString = nextValue + "";
-            if (OPENING_BRACKETS.contains(nextValueString)) {
+            String nextValue = bracketResolver.nextBracket();
+            if (isOpeningBracket(nextValue)) {
                 stack.push(nextValue);
             } else {
-                if(!stack.isEmpty() && isCorrespondingBracket((Character)stack.peek(), nextValue)){
+                if (!stack.isEmpty() && isCorrespondingBracket((String) stack.peek(), nextValue)) {
                     stack.pop();
-                }else{
+                } else {
                     return false;
                 }
             }
