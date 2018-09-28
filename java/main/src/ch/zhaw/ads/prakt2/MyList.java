@@ -1,9 +1,10 @@
 package src.ch.zhaw.ads.prakt2;
 
 import java.util.AbstractList;
+import java.util.Optional;
+import java.util.function.BiPredicate;
 
 public class MyList<T extends Comparable<T>> extends AbstractList<T> {
-
     private final Entry head = new Entry();
     private int size;
 
@@ -11,23 +12,15 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
         resetList();
     }
 
-    private void resetList() {
-        head.prev = head;
-        head.next = head;
-        head.value = null;
-        size = 0;
-    }
-
     @Override
     public T get(int index) {
         if (size <= (index-1)) {
             throw new IndexOutOfBoundsException("invalid index");
         }
-        Entry element = head.next;
-        for (int x=0; x<index; x++) {
-            element = element.next;
+        if (index == (size - 1)) {
+            return tail().value;
         }
-        return element.value;
+        return findFirstMatchingEntry((i, entry) -> i == index).map(entry -> entry.value).get();
     }
 
     @Override
@@ -37,14 +30,17 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
 
     @Override
     public boolean add(T t) {
-        if (t == null) {
-            throw new IllegalArgumentException("parameter t must not be null");
-        }
         createEntry(t, head, head.prev);
         return true;
     }
 
-    protected Entry createEntry(T value, Entry nextEntry, Entry prevEntry) {
+    @Override
+    public boolean remove(Object o) {
+        return findFirstMatchingEntry((index, currentEntry) -> currentEntry.value.compareTo((T) o) == 0).
+                map(this::removeEntry).orElse(false);
+    }
+
+    protected boolean createEntry(T value, Entry nextEntry, Entry prevEntry) {
         Entry newEntry = new Entry();
         newEntry.value = value;
         newEntry.next = nextEntry;
@@ -53,7 +49,7 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
         nextEntry.prev.next = newEntry;
         nextEntry.prev = newEntry;
         size++;
-        return newEntry;
+        return true;
     }
 
     private boolean removeEntry(Entry entry) {
@@ -61,18 +57,6 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
         entry.next.prev = entry.prev;
         size--;
         return true;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        Entry currentEntry = head.next;
-        for (int x=0; x<size; x++) {
-            if (currentEntry.value.compareTo((T) o) == 0) {
-                return removeEntry(currentEntry);
-            }
-            currentEntry = currentEntry.next;
-        }
-        return false;
     }
 
     public Entry head() {
@@ -91,6 +75,24 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
     @Override
     public void clear() {
         resetList();
+    }
+
+    protected Optional<Entry> findFirstMatchingEntry(BiPredicate<Integer, Entry> entryConsumer) {
+        Entry currentElement = head.next;
+        for (int x=0; x<size; x++) {
+            if (entryConsumer.test(x, currentElement)) {
+                return Optional.of(currentElement);
+            }
+            currentElement = currentElement.next;
+        }
+        return Optional.empty();
+    }
+
+    private void resetList() {
+        head.prev = head;
+        head.next = head;
+        head.value = null;
+        size = 0;
     }
 
     protected class Entry {
