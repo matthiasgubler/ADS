@@ -9,18 +9,16 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
     private int size;
 
     public MyList() {
-        resetList();
+        initList();
     }
 
     @Override
     public T get(int index) {
-        if (size <= (index-1)) {
+        if (!indexValid(index))
             throw new IndexOutOfBoundsException("invalid index");
-        }
-        if (index == (size - 1)) {
+        if (isLastIndex(index))
             return tail().value;
-        }
-        return findFirstMatchingEntry((i, entry) -> i == index).map(entry -> entry.value).get();
+        return findFirstMatchingEntry((i, entry) -> i == index).map(entry -> entry.value).orElse(null);
     }
 
     @Override
@@ -30,8 +28,7 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
 
     @Override
     public boolean add(T t) {
-        createEntry(t, head, head.prev);
-        return true;
+        return insertElement(t, head, head.prev);
     }
 
     @Override
@@ -40,17 +37,25 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
                 map(this::removeEntry).orElse(false);
     }
 
-    protected boolean createEntry(T value, Entry nextEntry, Entry prevEntry) {
+    protected boolean insertElement(T value, Entry nextEntry, Entry prevEntry) {
+        link(createNewEntry(value, nextEntry, prevEntry), nextEntry);
+        size++;
+        return true;
+    }
+
+    private void link(Entry newEntry, Entry nextEntry) {
+        nextEntry.prev.next = newEntry;
+        nextEntry.prev = newEntry;
+    }
+
+    private Entry createNewEntry(T value, Entry nextEntry, Entry prevEntry) {
         Entry newEntry = new Entry();
         newEntry.value = value;
         newEntry.next = nextEntry;
         newEntry.prev = prevEntry;
-
-        nextEntry.prev.next = newEntry;
-        nextEntry.prev = newEntry;
-        size++;
-        return true;
+        return newEntry;
     }
+
 
     private boolean removeEntry(Entry entry) {
         entry.prev.next = entry.next;
@@ -74,25 +79,32 @@ public class MyList<T extends Comparable<T>> extends AbstractList<T> {
 
     @Override
     public void clear() {
-        resetList();
+        initList();
     }
 
     protected Optional<Entry> findFirstMatchingEntry(BiPredicate<Integer, Entry> entryConsumer) {
         Entry currentElement = head.next;
         for (int x=0; x<size; x++) {
-            if (entryConsumer.test(x, currentElement)) {
+            if (entryConsumer.test(x, currentElement))
                 return Optional.of(currentElement);
-            }
             currentElement = currentElement.next;
         }
         return Optional.empty();
     }
 
-    private void resetList() {
+    private void initList() {
         head.prev = head;
         head.next = head;
         head.value = null;
         size = 0;
+    }
+
+    private boolean isLastIndex(int index) {
+        return index == (size - 1);
+    }
+
+    private boolean indexValid(int index) {
+        return (index+1) <= size;
     }
 
     protected class Entry {
