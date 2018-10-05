@@ -12,27 +12,43 @@ public class RankingServer implements CommandExecutor {
 
     private List<Competitor> competitorList = new ArrayList<>();
 
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     @Override
     public String execute(String fileContent) throws Exception {
-        competitorList.clear();
-        parseFile(fileContent);
-        return printCompetitorSorted();
-
-    }
-
-    private String printCompetitorSorted() {
         StringBuilder sb = new StringBuilder();
 
-        Collections.sort(competitorList);
+        competitorList.clear();
+        parseFile(fileContent);
 
-        for (int i = 0; i < competitorList.size(); i++) {
-            Competitor competitor = competitorList.get(i);
-            competitor.setRank(i + 1);
-            sb.append(competitor.toString());
-            sb.append(System.getProperty("line.separator"));
-        }
+        Collections.sort(competitorList);
+        fillRank();
+
+        sb.append("==========Rangliste==========");
+        sb.append(LINE_SEPARATOR);
+        printCompetitorSorted(sb);
+
+        sb.append(LINE_SEPARATOR);
+        Collections.sort(competitorList, new CompetitorComparator());
+        sb.append("==========Namensliste==========");
+        sb.append(LINE_SEPARATOR);
+        printCompetitorSorted(sb);
 
         return sb.toString();
+    }
+
+    private void fillRank() {
+        for (int i = 0; i < competitorList.size(); i++) {
+            competitorList.get(i).setRank(i + 1);
+        }
+    }
+
+    private void printCompetitorSorted(StringBuilder sb) {
+        for (int i = 0; i < competitorList.size(); i++) {
+            Competitor competitor = competitorList.get(i);
+            sb.append(competitor.toString());
+            sb.append(LINE_SEPARATOR);
+        }
     }
 
     private void parseFile(String fileContent) throws ParseException {
