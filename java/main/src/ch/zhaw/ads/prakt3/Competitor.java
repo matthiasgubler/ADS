@@ -64,7 +64,6 @@ public class Competitor implements Comparable<Competitor> {
     @Override
     public int compareTo(Competitor competitorCompare) {
         if (this.getTime() == competitorCompare.getTime()) {
-            System.out.println("Gleiche Zeit" + competitorCompare.getName());
             if (this.getJg() == competitorCompare.getJg()) {
                 return 0;
             } else if (this.getJg() < competitorCompare.getJg()) {
