@@ -1,4 +1,4 @@
-package src.ch.zhaw.ads.prakt2;
+package ch.zhaw.ads.prakt2;
 
 public class MySortedList<T extends Comparable<T>> extends MyList<T> {
 

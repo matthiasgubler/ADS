@@ -1,4 +1,4 @@
-package src.ch.zhaw.ads.prakt2;
+package ch.zhaw.ads.prakt2;
 
 import java.util.AbstractList;
 import java.util.Optional;
