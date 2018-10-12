@@ -75,8 +75,7 @@ public class Competitor implements Comparable<Competitor> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Competitor that = (Competitor) o;
-        return time == that.time &&
-                jg == that.jg;
+        return time == that.time;
     }
 
 }
