@@ -11,11 +11,13 @@ public class HanoiServer implements CommandExecutor {
     }
 
     void move (int n, String from, String to, String help, StringBuilder allHints) {
-        if (n > 0) {
-            move(n-1,from,help,to, allHints);
+        if (n == 1) {
             addHint(from, to, allHints);
-            move(n-1,help,to,from, allHints);
+            return;
         }
+        move(n-1,from,help,to, allHints);
+        addHint(from, to, allHints);
+        move(n-1,help,to,from, allHints);
     }
 
     void addHint(String from , String to, StringBuilder allHints) {
