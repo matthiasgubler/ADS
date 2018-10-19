@@ -10,7 +10,9 @@ import java.util.Scanner;
 public class RankingServer implements CommandExecutor {
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     private Tree<Competitor> competitorTree;
+
     private PrepareRankingVisitor prepareRankingVisitor = new PrepareRankingVisitor();
 
     @Override

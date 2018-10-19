@@ -63,7 +63,6 @@ public class SortedBinaryTree<T extends Comparable<T>> implements Tree<T> {
         return removed.element;
     }
 
-
     public boolean isEmpty() {
         return root == null;
     }
