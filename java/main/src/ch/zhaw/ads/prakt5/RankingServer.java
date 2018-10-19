@@ -21,9 +21,14 @@ public class RankingServer implements CommandExecutor {
 
         competitorTree = new SortedBinaryTree<>();
         parseFile(fileContent);
+        fillRank();
         printCompetitorSorted();
 
         return prepareRankingVisitor.toString();
+    }
+
+    private void fillRank() {
+        competitorTree.traversal().inorder(new SetRankingVisitor());
     }
 
     private void printCompetitorSorted() {
