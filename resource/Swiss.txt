@@ -1,0 +1,15 @@
+Winterthur Z�rich 25
+Z�rich Bern 126
+Z�rich Genf 277
+Z�rich Luzern 54
+Z�rich Chur 121
+Z�rich Berikon 16
+Bern Genf 155
+Genf Lugano 363
+Lugano Luzern 206
+Lugano Chur 152
+Chur Luzern 146
+Luzern Bern 97
+Bern Berikon 102
+Luzern Berikon 41
+
