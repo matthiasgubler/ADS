@@ -1,19 +1,19 @@
 package ch.zhaw.ads.prakt9;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 public class MyHashtable<K, V> implements java.util.Map<K, V> {
+    private final K DELETED = (K) new Object();
+
     private int maxSize;
-    private int resizeFactor = 1;
 
     private K[] keys;
 
     private V[] values;
 
-    private int size = 0;
+    private int size;
 
     public MyHashtable(int maxSize) {
         this.maxSize = maxSize;
@@ -26,79 +26,73 @@ public class MyHashtable<K, V> implements java.util.Map<K, V> {
     }
 
     private void resize() {
-        K[] oldKeys = Arrays.copyOf(keys, maxSize);
-        V[] oldValues = Arrays.copyOf(values, maxSize);
-
-        maxSize = maxSize * 2;
-
+        K[] oldKeys = keys;
+        V[] oldValues = values;
+        maxSize *= 2;
         clear();
         for (int i = 0; i < oldKeys.length; i++) {
-            K currentKey = oldKeys[i];
-            V currentValue = oldValues[i];
-            this.put(currentKey, currentValue);
+            if (oldKeys[i] != null && oldKeys[i] != DELETED) {
+                this.put(oldKeys[i], oldValues[i]);
+            }
         }
-
-        resizeFactor++;
     }
 
-    //  Removes all mappings from this map (optional operation). 
     public void clear() {
         keys = (K[]) new Object[maxSize];
         values = (V[]) new Object[maxSize];
-    }
-
-    //  Associates the specified value with the specified key in this map (optional operation).
-    public V put(K key, V value) {
-        int keyIndex = findPosition(key);
-        if (keys[keyIndex] == null) {
-            size++;
-            keys[keyIndex] = key;
-            values[keyIndex] = value;
-            if (size == maxSize) {
-                resize();
-            }
-        }
-        return value;
+        size = 0;
     }
 
     private int findPosition(K key) {
         int collisionNum = 0;
         int currentPos = hash(key);
-        while (keys[currentPos] != null &&
-                !keys[currentPos].equals(key)) {
-            currentPos += 2 * ++collisionNum - 1;
-            currentPos = currentPos % keys.length;
+        while (keys[currentPos] != null && !keys[currentPos].equals(key) && collisionNum < maxSize) {
+            currentPos += 2 * collisionNum++;
+            currentPos %= keys.length;
         }
-        if (keys[currentPos] != null &&
-                keys[currentPos].equals(key)) {
-        }
-        return currentPos;
+
+        return collisionNum == maxSize ? -1 : currentPos;
     }
 
-    //  Returns the value to which this map maps the specified key. 
+    public V put(K key, V value) {
+        int keyIndex = findPosition(key);
+        if (keyIndex < 0) {
+            // Wenn alle Plätze durch "gelöschte Einträge" besetzt sind, resize und alles wieder freigeben
+            resize();
+            return put(key, value);
+        }
+        if (keys[keyIndex] == null) {
+            if (size > 0.8 * maxSize) {
+                resize();
+            }
+
+            size++;
+            keys[keyIndex] = key;
+            values[keyIndex] = value;
+        }
+
+        return value;
+    }
+
     public V get(Object key) {
-        int keyIndex = hash(key);
-        return values[keyIndex];
+        int keyIndex = findPosition((K) key);
+        return keyIndex < 0 ? null : values[keyIndex];
     }
 
-    //  Returns true if this map contains no key-value mappings. 
     public boolean isEmpty() {
         return size() == 0;
     }
 
     public V remove(Object key) {
         int keyIndex = findPosition((K) key);
-        V previousValue = values[keyIndex];
-        if (keys[keyIndex] != null) {
-            //System.out.println("Deleting at index="+keyIndex);
-
+        V previousValue = null;
+        if (keyIndex >= 0 && keys[keyIndex] != null) {
+            previousValue = values[keyIndex];
             size--;
-            keys[keyIndex] = null;
+            keys[keyIndex] = DELETED;
             values[keyIndex] = null;
-        } else {
-            //Does not exist in Map
-            //System.out.println("Nothing to delete to index="+keyIndex);
         }
+
         return previousValue;
     }
 
@@ -120,7 +114,7 @@ public class MyHashtable<K, V> implements java.util.Map<K, V> {
 
     //  Returns a collection view of the values contained in this map. 
     public Collection values() {
-        return Arrays.asList(values);
+        throw new UnsupportedOperationException();
     }
 
     //  Returns true if this map contains a mapping for the specified key.
@@ -141,18 +135,12 @@ public class MyHashtable<K, V> implements java.util.Map<K, V> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MyHashtable<?, ?> that = (MyHashtable<?, ?>) o;
-        return Arrays.equals(keys, that.keys) &&
-                Arrays.equals(values, that.values);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(keys);
-        result = 31 * result + Arrays.hashCode(values);
-        return result;
+        throw new UnsupportedOperationException();
     }
 
 }
